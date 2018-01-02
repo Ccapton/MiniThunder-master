@@ -37,7 +37,6 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         XLTaskHelper.init(getApplicationContext());
         binding.btnDown.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,7 +51,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     public String[] getPermissions() {
-        return getPermissions();
+        return requestPermissions;
     }
 
     @Override

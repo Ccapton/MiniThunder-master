@@ -4,12 +4,16 @@ import android.Manifest;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.blankj.utilcode.util.Utils;
 import com.capton.common.databinding.ActivityBaseBinding;
 
 /**
@@ -59,20 +63,37 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = DataBindingUtil.inflate(getLayoutInflater(),getLayoutId(),null,false);
+        Utils.init(getApplication());
+
+        binding = DataBindingUtil.inflate(LayoutInflater.from(this),getLayoutId(),null,false);
         baseBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.activity_base,null,false);
-        baseBinding.container.addView(binding.getRoot());
 
         setContentView(baseBinding.getRoot());
 
-        setShowMoreIcon(false);
-        setClickListener(true);
-        setClickListener();
+        handler.sendMessageDelayed(handler.obtainMessage(),50);
 
-        if(getPermissions() != null)
-           if(getPermissions().length !=0)
-            PermissionUtils.requestMultiPermissions(this,mPermissionGrant,getPermissions());
+
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            View view = binding.getRoot();
+            int width = baseBinding.container.getWidth();
+            int height = baseBinding.container.getHeight();
+            ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(width,height);
+            view.setLayoutParams(lp);
+            baseBinding.container.addView(view);
+
+            setShowMoreIcon(false);
+            setClickListener(true);
+            setClickListener();
+
+            if(getPermissions() != null)
+                if(getPermissions().length !=0)
+                    PermissionUtils.requestMultiPermissions(BaseActivity.this,mPermissionGrant,getPermissions());
+        }
+    };
 
     /**
      * 返回一个权限数组 默认是 requestPermissions (String [])
